@@ -1,0 +1,10 @@
+# Ubuntu 16.04 特定版本要求：
+# - openai==0.28.1    # 使用旧版本以避免 pydantic 兼容性问题
+# - gradio==3.50.2    # 使用较低版本以确保兼容性
+# - urllib3<2.0.0     # 因为 Ubuntu 16.04 的 OpenSSL 版本是 1.0.2g
+# - requests<2.29.0   # 配合 urllib3 的版本要求
+
+openai==0.28.1
+gradio==3.50.2
+urllib3<2.0.0
+requests<2.29.0
