@@ -81,7 +81,7 @@ python app_ecs_ubuntu.py
 
 应用启动后，在浏览器中访问：
 - 本地环境：http://localhost:7860
-- ECS 环境：https://www.yueduhezi.com/summarize/
+- ECS 环境：https://你的域名/summarize/
 
 ## 版本说明
 
@@ -125,7 +125,44 @@ screen -r text-summary
 screen -ls
 ```
 
-4. 配置安全组
+4. 配置 Nginx 反向代理
+```bash
+# 安装 Nginx（如果未安装）
+sudo apt-get update
+sudo apt-get install nginx
+
+# 创建新的配置文件
+sudo mkdir -p /etc/nginx/sites-available
+sudo nano /etc/nginx/sites-available/text-summary
+
+# 添加以下配置
+server {
+    listen 80;
+    server_name www.yueduhezi.com;
+
+    location /summarize/ {
+        proxy_pass http://localhost:7860/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+# 创建符号链接到 sites-enabled 目录
+sudo ln -s /etc/nginx/sites-available/text-summary /etc/nginx/sites-enabled/
+
+# 删除默认配置的符号链接（如果存在）
+sudo rm -f /etc/nginx/sites-enabled/default
+
+# 测试配置文件
+sudo nginx -t
+
+# 重启 Nginx
+sudo systemctl restart nginx
+```
+
+3. 配置安全组
 - 开放 80 端口（HTTP）
 - 开放 443 端口（HTTPS）
 - 关闭 7860 端口（应用端口）
